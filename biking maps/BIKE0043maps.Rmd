@@ -1,0 +1,254 @@
+---
+title: "BIKE0043maps"
+output: pdf_document
+---
+
+#BIKE0043 Biking Maps
+
+Thank you for participating in Columbia University's Biking Study on Potential Inhaled Dose and Cardiovascular Indicators. In this packet you will find various maps and plots from your sessions. These maps do not contain all the data you collected, but don't worry, all of your data is still being used!
+
+
+We mapped data from your sessions in January. The dates and times of your commutes are in the table below.
+
+Date     | Start of Morning Ride  | End of Morning Ride | Start of Evening Ride | End of Evening Ride
+---------| ---------------| ------------| --------| -------
+1/06/16 | 10:00 am       | 10:56 am    | 7:33 pm | 8:26 pm 
+1/10/16 | 10:10 am       | 11:06 am    | 8:32 pm | 9:24 pm 
+1/16/16 | 11:39 am       | 12:29 pm    | 7:29 pm | 8:17 pm 
+1/18/16 | 10:11 am       | 11:09 am    | 9:27 pm | 10:08 pm 
+1/25/16 | 10:02 am       | 10:59 am    | 7:36 pm | 8:26 pm 
+
+
+The maps and plots show the following parameters: 
+  * PM~2.5~ (micrograms per cubic meter)
+  * Minute Ventilation (liters per minute)
+  * Potential Inhaled Dose of PM~2.5~ (nanograms per minute)
+  
+The following table shows the percentage of data completeness. Data completeness is the achieved duration of the collected data/the attempted duration of data collection. Overall, we were pleased by participants' data completeness. 
+
+Device  |  Data Completeness
+-------|---------------
+MicroPEM  | 92%
+MicroAeth | 97%
+Hexoskin | 91%
+Blood Pressure Monitor during sleep | 73%
+Blood Pressure Monitor 5 hours after morning ride | 87%
+GPS | 95%
+
+
+\newpage 
+## PM~2.5~ Maps
+
+This first set of maps show the measured amount of particulate matter (PM~2.5~) in micrograms per cubic meter during your commutes. PM~2.5~ is particulate matter with an aerodynamic diameter less than 2.5 microns. In general, these fine particles stem from burning of fuels. Therefore, vehicle exhaust and the burning of heating oils are some of the main sources in NYC. Indoor sources of PM~2.5~ are often a result of cooking, burning candles/fireplaces, and smoking. 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.align='center', fig.height= 10, fig.width=7.5}
+library(ggplot2)
+library(ggmap)
+library(dplyr)
+#read in individual file
+bike1032 <- read.csv("bike1032.csv")
+
+#set cats are levels so they get the same color and order 
+bike1032$PM_cat <- factor(bike1032$PM_cat, levels = c("<10", "10-25", "25-50", ">50"))
+bike1032$MV_cat <- factor(bike1032$MV_cat , levels = c("3-35", "35-50", "50-70", "70-170"))  
+bike1032$PMdose_cat <-factor(bike1032$PMdose_cat, levels = c("<200", "200-350", "350-500", ">500"))
+
+#set order so morning is first
+bike1032$tod <- factor(bike1032$tod, levels = c("Morning", "Evening"))
+#segment for each session
+bike1032_s1 <- subset(bike1032, session== "1")
+bike1032_s2 <- subset(bike1032, session== "2")
+bike1032_s3 <- subset(bike1032, session== "3")
+bike1032_s4 <- subset(bike1032, session== "4")
+bike1032_s5 <- subset(bike1032, session== "5")
+
+# pm
+#session 1
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s1, aes(longitude_avg, latitude_avg, color=PM_cat), size =2)  + ggtitle("Morning 1/06/17") +
+  scale_color_manual(name = "PM2.5 (ug/m^3)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<10", "10-25", "25-50", ">50")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+#session 2
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s2, aes(longitude_avg, latitude_avg, color=PM_cat), size =2)  +facet_wrap(tod ~ day) +
+  scale_color_manual(name = "PM2.5 (ug/m^3)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<10", "10-25", "25-50", ">50")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+#session 3
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s3, aes(longitude_avg, latitude_avg, color=PM_cat), size =2)  +facet_wrap(tod ~ day) +
+  scale_color_manual(name = "PM2.5 (ug/m^3)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<10", "10-25", "25-50", ">50")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+#session 4
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s4, aes(longitude_avg, latitude_avg, color=PM_cat), size =2)  +facet_wrap(tod ~ day) +
+  scale_color_manual(name = "PM2.5 (ug/m^3)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<10", "10-25", "25-50", ">50")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+#session 5
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s5, aes(longitude_avg, latitude_avg, color=PM_cat), size =2)  +facet_wrap(tod ~ day) +
+  scale_color_manual(name = "PM2.5 (ug/m^3)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<10", "10-25", "25-50", ">50")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+
+```
+\newpage
+Minute Ventilation Maps
+
+The next set of maps show your minute ventilation in liters per minute for each of your commutes. Minute ventilation is the amount of air you inhale or exhale per minute. It is essentially a measurement of how hard you are breathing, with the higher ventilation rate equaling heavier breathing. Minute ventilation varies between individuals based on lung size and level of fitness, with larger and more fit individuals being able to achieve higher rates. An average rate during rest is around 6.0 L/min, and during moderate exercise the average is around 60 L/min. Maximal exercise typically results in a rate over 90 L/min in healthy individuals. The maximum minute ventilate an adult can achieve during maximal exercise is around 180 L/min for males and 145 L/min for females.
+
+
+The Hexoskin Shirt collects the minute ventilation data through sensors, therefore, the fit of the shirt is very important. If the bands and sensors are not in contact with the skin, or the shirt shifted, the shirt cannot generate accurate data. We used the data collected from the validation of the shirt to help identify and correct these instances. 
+
+ 
+```{r,echo=FALSE, results='hide', message=FALSE ,warning=FALSE,  fig.align='center', fig.height= 10, fig.width=7.5}
+#Min Vent
+#session 1
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s1, aes(longitude_avg, latitude_avg, color=MV_cat), size = 2) + ggtitle("Morning 1/06/17") +
+  scale_color_manual(name = "Minute Ventilation\n(L/min)" ,values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("3-35", "35-50", "50-70", "70-170")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size = 16), strip.text.y = element_text(size=16))
+
+#session 2
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s2, aes(longitude_avg, latitude_avg, color=MV_cat), size = 2) + ggtitle("Morning 1/10/17") +
+  scale_color_manual(name = "Minute Ventilation\n(L/min)" ,values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("3-35", "35-50", "50-70", "70-170")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size = 16), strip.text.y = element_text(size=16))
+
+
+#session 4
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s4, aes(longitude_avg, latitude_avg, color=MV_cat), size = 2) +facet_wrap(tod ~ day) +
+  scale_color_manual(name = "Minute Ventilation\n(L/min)" ,values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("3-35", "35-50", "50-70", "70-170")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size = 16), strip.text.y = element_text(size=16))
+
+#session 5
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s5, aes(longitude_avg, latitude_avg, color=MV_cat), size = 2) +facet_wrap(tod ~ day) +
+  scale_color_manual(name = "Minute Ventilation\n(L/min)" ,values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("3-35", "35-50", "50-70", "70-170")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size = 16), strip.text.y = element_text(size=16))
+
+
+```
+\newpage
+PM~2.5~ Dose Maps
+
+The last set of maps show the potential inhaled dose of PM~2.5~ in nanograms per minute for each of your commutes. The potential inhaled dose is a function of the amount of PM~2.5~ in the air multiplied by your minute ventilation at the time of exposure. Calculating dose allows us to estimate the amount of PM~2.5~ inhaled during your commute. 
+
+```{r,echo=FALSE, results='hide', message=FALSE,warning=FALSE, fig.align='center', fig.height= 10, fig.width=7.5}
+#pm dose
+#session 1
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s1, aes(longitude_avg, latitude_avg, color=PMdose_cat), size =2) + ggtitle("Morning 1/06/17") +
+  scale_color_manual(name = "PM2.5 dose (ng/min)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<200", "200-350", "350-500", ">500")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+#session 2
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s2, aes(longitude_avg, latitude_avg, color=PMdose_cat), size =2) + ggtitle("Morning 1/10/17") +
+  scale_color_manual(name = "PM2.5 dose (ng/min)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<200", "200-350", "350-500", ">500")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+
+#session 4
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s4, aes(longitude_avg, latitude_avg, color=PMdose_cat), size =2) + facet_wrap(tod ~ day) +
+  scale_color_manual(name = "PM2.5 dose (ng/min)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<200", "200-350", "350-500", ">500")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+#session 5
+qmap("New museum, NYC", zoom = 13, color= "color", legend = "right") + 
+  geom_point(data = bike1032_s5, aes(longitude_avg, latitude_avg, color=PMdose_cat), size =2) + facet_wrap(tod ~ day) +
+  scale_color_manual(name = "PM2.5 dose (ng/min)" , values = c("#00FF00","#FFFF00", "#FF6600","#CC0000"), breaks= c("<200", "200-350", "350-500", ">500")) +
+  theme(legend.title = element_text(size = 18), legend.text = element_text(size = 18), strip.text.x = element_text(size=16), strip.text.y = element_text(size = 16)) 
+
+```
+
+\newpage
+Time-series Plots
+
+The following are plots of PM~2.5~ exposure, minute ventilation, PM~2.5~ exposure, and potential inhaled dose of PM~2.5~ over the duration of a session. The blue sections on the plot indicate the time you were biking. 
+
+```{r,echo=FALSE, results='hide', message=FALSE, warning=FALSE, fig.align='center', fig.height= 5, fig.width=7.5}
+#create new time variable for plots
+bike1032_s1$TimeA <- as.POSIXct(bike1032_s1$datetime1)
+bike1032_s2$TimeA <- as.POSIXct(bike1032_s2$datetime1)
+bike1032_s3$TimeA <- as.POSIXct(bike1032_s3$datetime1)
+bike1032_s4$TimeA <- as.POSIXct(bike1032_s4$datetime1)
+bike1032_s5$TimeA <- as.POSIXct(bike1032_s5$datetime1)
+#create new biking variable with other one had errors (only for a few people)
+bike1032_s1$biking2 [bike1032_s1$latitude_avg > 0] <- 1
+bike1032_s2$biking2 [bike1032_s2$latitude_avg > 0] <- 1
+bike1032_s3$biking2 [bike1032_s3$latitude_avg > 0] <- 1
+bike1032_s4$biking2 [bike1032_s4$latitude_avg > 0] <- 1
+bike1032_s5$biking2 [bike1032_s5$latitude_avg > 0] <- 1
+
+```
+
+```{r,echo=FALSE, results='hide', message=FALSE, warning=FALSE, fig.align='center', fig.height= 5, fig.width=7.5}
+
+
+#PM session 1
+ggplot(bike1032_s1, aes(x= TimeA , y= pm.clean2, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 (ug/m^3)") + ggtitle("PM2.5: Session 1") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+# MV session 1
+ggplot(bike1032_s1, aes(x= TimeA, y= adj.mv, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("Minute Ventilation (l/min)") + ggtitle("Minute Ventilation: Session 1") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+
+# PM dose session 1 
+ggplot(bike1032_s1, aes(x= TimeA , y= pmdose, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 Dose (ng/min)") + ggtitle("PM2.5 Dose: Session 1") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+```
+
+\newpage
+```{r,echo=FALSE, results='hide', message=FALSE, warning=FALSE, fig.align='center', fig.height= 5, fig.width=7.5}
+
+#PM session 2
+ggplot(bike1032_s2, aes(x= TimeA , y= pm.clean2, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 (ug/m^3)") + ggtitle("PM2.5: Session 2") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+# MV session 2
+ggplot(bike1032_s2, aes(x= TimeA, y= adj.mv, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("Minute Ventilation (l/min)") + ggtitle("Minute Ventilation: Session 2") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+
+# PM dose session 2 
+ggplot(bike1032_s2, aes(x= TimeA , y= pmdose, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 Dose (ng/min)") + ggtitle("PM2.5 Dose: Session 2") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+```
+\newpage
+```{r,echo=FALSE, results='hide', message=FALSE, warning=FALSE, fig.align='center', fig.height= 5, fig.width=7.5}
+
+#PM session 3
+ggplot(bike1032_s3, aes(x= TimeA , y= pm.clean2, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 (ug/m^3)") + ggtitle("PM2.5: Session 3") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+
+```
+
+\newpage
+```{r,echo=FALSE, results='hide', message=FALSE, warning=FALSE, fig.align='center', fig.height= 5, fig.width=7.5}
+
+#PM session 4
+ggplot(bike1032_s4, aes(x= TimeA , y= pm.clean2, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 (ug/m^3)") + ggtitle("PM2.5: Session 4") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+# MV session 4
+ggplot(bike1032_s4, aes(x= TimeA, y= adj.mv, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("Minute Ventilation (l/min)") + ggtitle("Minute Ventilation: Session 4") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+
+# PM dose session 4 
+ggplot(bike1032_s4, aes(x= TimeA , y= pmdose, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 Dose (ng/min)") + ggtitle("PM2.5 Dose: Session 4") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+```
+\newpage
+```{r,echo=FALSE, results='hide', message=FALSE, warning=FALSE, fig.align='center', fig.height= 5, fig.width=7.5}
+
+#PM session 5
+ggplot(bike1032_s5, aes(x= TimeA , y= pm.clean2, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 (ug/m^3)") + ggtitle("PM2.5: Session 5") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+# MV session 5
+ggplot(bike1032_s5, aes(x= TimeA, y= adj.mv, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("Minute Ventilation (l/min)") + ggtitle("Minute Ventilation: Session 5") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+
+
+# PM dose session 5 
+ggplot(bike1032_s5, aes(x= TimeA , y= pmdose, col = biking2)) + geom_line() + xlab("Time of Day") + ylab("PM2.5 Dose (ng/min)") + ggtitle("PM2.5 Dose: Session 5") +theme(legend.position = "none", axis.text.x=element_text(size=18), axis.text.y= element_text(size=18), axis.title.x= element_text(size=18), axis.title.y= element_text(size=18), title= element_text(size=18))
+```
+
